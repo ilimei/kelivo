@@ -52,6 +52,10 @@ void main() {
         ProviderConfig.zenMuxBaseUrlFor(ProviderKind.google),
         'https://zenmux.ai/api/vertex-ai/v1/publishers/google',
       );
+      expect(
+        ProviderConfig.zenMuxImageModelSlug('openai/gpt-image-2'),
+        'gpt-image-2',
+      );
     });
 
     test('built-in provider order does not add Kimi preset', () async {

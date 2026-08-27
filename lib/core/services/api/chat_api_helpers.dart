@@ -48,19 +48,6 @@ String apiModelId(ProviderConfig cfg, String modelId) {
   try {
     final ov = _modelOverride(cfg, modelId);
     final resolved = resolveApiModelIdOverride(ov, modelId);
-    if (ProviderConfig.isZenMux(
-          id: cfg.id,
-          name: cfg.name,
-          baseUrl: cfg.baseUrl,
-        ) &&
-        ProviderConfig.classify(
-              cfg.id,
-              explicitType: cfg.providerType,
-            ) ==
-            ProviderKind.google) {
-      final slash = resolved.indexOf('/');
-      return slash >= 0 ? resolved.substring(slash + 1) : resolved;
-    }
     return resolved;
   } catch (_) {}
   return modelId;
