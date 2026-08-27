@@ -47,20 +47,21 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Create release signing key
+      - name: Configure release signing key
+        env:
+          SIGN_KEYSTORE_BASE64: ${{ secrets.SIGN_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          keytool -genkeypair -v \
-            -keystore android/app/kelivo-release.jks \
-            -storepass changeit \
-            -keypass changeit \
-            -alias kelivo \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -dname "CN=Kelivo, OU=ZenMux, O=ZenMux, L=Shanghai, ST=Shanghai, C=CN"
-          cat > android/key.properties <<'EOF'
-          storeFile=kelivo-release.jks
-          storePassword=changeit
-          keyAlias=kelivo
-          keyPassword=changeit
+          set -euo pipefail
+          test -n "$SIGN_KEYSTORE_BASE64"
+          echo "$SIGN_KEYSTORE_BASE64" | base64 --decode > android/app/kelivo-release.p12
+          cat > android/key.properties <<EOF
+          storeFile=kelivo-release.p12
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
           EOF
 
       - name: Install dependencies
