@@ -47,6 +47,22 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Create release signing key
+        run: |
+          keytool -genkeypair -v \
+            -keystore android/kelivo-release.jks \
+            -storepass changeit \
+            -keypass changeit \
+            -alias kelivo \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Kelivo, OU=ZenMux, O=ZenMux, L=Shanghai, ST=Shanghai, C=CN"
+          cat > android/key.properties <<'EOF'
+          storeFile=kelivo-release.jks
+          storePassword=changeit
+          keyAlias=kelivo
+          keyPassword=changeit
+          EOF
+
       - name: Install dependencies
         run: flutter pub get
 
